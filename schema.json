@@ -1,0 +1,30 @@
+{
+    "issuer": "AyaLabs",
+    "desc": "Verification of existing profile on AyaLabs.",
+    "website": "https://labs.ayahq.com/individual/overview",
+    "APIs": [
+      {
+        "host": "ayalabs-2-prod-mvjtu.ondigitalocean.app",
+        "intercept": {
+          "url": "builder/dashboard",
+          "method": "GET"
+        },
+        "assert": [
+          {
+            "key": "data|builder|userId",
+            "value": " ",
+            "operation": "!="
+          }
+        ],
+        "nullifier": "data|builder|userId"
+      }
+    ],
+    "HRCondition": [
+      "User has an account on AyaLabs"
+    ],
+    "tips": {
+      "message": "Please log in to start the verification process."
+    },
+    "category": "Social",
+    "id": "0x2efae1062c494f94adad29b5718e2efb"
+  }
