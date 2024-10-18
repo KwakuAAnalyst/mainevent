@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation'
 import TransgateConnect  from '@zkpass/transgate-js-sdk'
 import verifyEvmBasedResult from './verifyevmbasedresults'
 import Image from 'next/image'
+import { VerifyEvmBasedResultParams } from './types'
 
 // Mock event data
 const eventData: Record<string, Array<{ title: string; time: string; description: string }>> = {
@@ -44,6 +45,7 @@ export default function Component() {
   const [appId] = useState<string>('30453a18-49b3-4f2b-bc6b-9879cfb51d1a')
   const [schemaId] = useState<string>('2efae1062c494f94adad29b5718e2efb')
 
+
   useEffect(() => {
     setCurrentDate(new Date())
   }, [])
@@ -59,7 +61,7 @@ export default function Component() {
   const currentMonthData = getMonthData(currentDate)
   const nextMonthData = getMonthData(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
 
-  const renderCalendar = (monthData, isCurrentMonth) => {
+  const renderCalendar = (monthData: { year: number; month: number; firstDay: number; daysInMonth: number }, isCurrentMonth: boolean) => {
     const { year, month, firstDay, daysInMonth } = monthData
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
     const blanks = Array.from({ length: firstDay }, (_, i) => i)
@@ -174,15 +176,17 @@ export default function Component() {
 
   const handleAddNewEvent = () => {
     if (!walletConnected) {
-      const generate = async (schemaId, Appid) => {
+      const generate = async (schemaId: string, Appid: string) => {
         try {
-          console.log (schemaId, Appid)
+          console.log(schemaId, Appid);
           const connector = new TransgateConnect(Appid);
           const isAvailable = await connector.isTransgateAvailable();
           if (isAvailable) {
             const res = await connector.launch(schemaId);
-            await verifyEvmBasedResult(res, schemaId);
-          } else { alert('Please install the TransGate extension')
+            // Add a type assertion to ensure all required properties are present
+            await verifyEvmBasedResult(res as Required<VerifyEvmBasedResultParams>, schemaId);
+          } else {
+            alert('Please install the TransGate extension');
             console.log('Please install the TransGate extension');
           }
         } catch (error) {
@@ -191,17 +195,19 @@ export default function Component() {
       };
       generate(schemaId, appId);
     } else {
-      // Instead of setting showAddEventPage to true, navigate to the new event page
       router.push('/event')
     }
   }
 
   const connectWallet = async () => {
-    setWalletError(null)
+    setWalletError(null);
+    
+    // Type-safe check for ethereum property on window
     if (typeof window.ethereum !== 'undefined') {
       try {
         // Request account access
-        await window.ethereum.request({ method: 'eth_requestAccounts' })
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        console.log('Wallet connected')
         
         // Get the connected accounts
         const web3Instance = new Web3(window.ethereum)
@@ -213,16 +219,6 @@ export default function Component() {
           setWalletConnected(true)
           setShowWalletPopup(false)
 
-          // Get network information
-          const networkId = await web3Instance.eth.net.getId()
-          const networkName = getNetworkName(networkId)
-          setNetwork(networkName)
-
-          // Get balance
-          const balanceWei = await web3Instance.eth.getBalance(connectedAccount)
-          const balanceEth = web3Instance.utils.fromWei(balanceWei, 'ether')
-          setBalance(parseFloat(balanceEth).toFixed(4))
-
           toast({
             title: "Wallet Connected",
             description: "Your wallet has been successfully connected.",
@@ -230,8 +226,8 @@ export default function Component() {
         } else {
           setWalletError('No accounts found. Please make sure your wallet is unlocked.')
         }
-      } catch (error: any) {
-        if (error.code === 4001) {
+      } catch (error: unknown) {
+        if (error instanceof Error && 'code' in error && error.code === 4001) {
           setWalletError('You rejected the connection request. Please try again.')
         } else {
           setWalletError('Failed to connect wallet. Please try again.')
@@ -240,17 +236,6 @@ export default function Component() {
       }
     } else {
       setWalletError('No Ethereum wallet detected. Please install MetaMask or another web3 wallet.')
-    }
-  }
-
-  const getNetworkName = (networkId: number): string => {
-    switch (networkId) {
-      case 1: return 'Ethereum Mainnet'
-      case 3: return 'Ropsten Testnet'
-      case 4: return 'Rinkeby Testnet'
-      case 5: return 'Goerli Testnet'
-      case 42: return 'Kovan Testnet'
-      default: return 'Unknown Network'
     }
   }
 
@@ -332,7 +317,7 @@ export default function Component() {
     }
   }
 
-  const handleNetworkSwitch = async (networkName: string): Promise<void> => {
+  /*const handleNetworkSwitch = async (networkName: string): Promise<void> => {
     // Implementation
   }
 
@@ -342,7 +327,7 @@ export default function Component() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     // Implementation
-  }
+  }*/
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 text-white p-8">
@@ -408,7 +393,7 @@ export default function Component() {
             </button>
             {showUpcomingEvents && (
               <div className="space-y-4">
-                {upcomingEvents.map(([date, events]) => (
+                {Object.entries(eventData).map(([date, events]) => (
                   <div key={date} className="flex items-center space-x-4">
                     <Calendar className="h-6 w-6" />
                     <div>
@@ -428,7 +413,7 @@ export default function Component() {
           <DialogHeader>
             <DialogTitle>Events for {selectedDate}</DialogTitle>
             <DialogDescription>
-              {eventData[selectedDate] ? (
+              {selectedDate && eventData[selectedDate] ? (
                 eventData[selectedDate].map((event, index) => (
                   <div key={index} className="mb-4">
                     <h3 className="font-bold">{event.title}</h3>
