@@ -5,7 +5,6 @@ interface VerifyEvmBasedResultParams {
   taskId: string;
   uHash: string;
   publicFieldsHash: string;
-  recipient: string;
   validatorAddress: string;
   allocatorSignature: string;
   validatorSignature: string;
@@ -13,7 +12,7 @@ interface VerifyEvmBasedResultParams {
 
 const verifyEvmBasedResult = async (res: VerifyEvmBasedResultParams, schemaId: string) => {
   try {
-    const { taskId, uHash, publicFieldsHash, recipient, validatorAddress, allocatorSignature, validatorSignature } = res;
+    const { taskId, uHash, publicFieldsHash, validatorAddress, allocatorSignature, validatorSignature } = res;
     
 // Step 1: Verify Allocator Signature
     const taskIdHex = Web3.utils.stringToHex(taskId);

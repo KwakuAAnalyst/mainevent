@@ -18,16 +18,15 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
-// If actionTypes is only used as a type, you can use a type alias instead of a const
-type ActionTypes = {
+// Use type instead of const for actionTypes
+type ActionType = {
   ADD_TOAST: "ADD_TOAST"
   UPDATE_TOAST: "UPDATE_TOAST"
   DISMISS_TOAST: "DISMISS_TOAST"
   REMOVE_TOAST: "REMOVE_TOAST"
 }
 
-// Use the type alias in your code
-const actionTypes: ActionTypes = {
+const actionTypes: ActionType = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
   DISMISS_TOAST: "DISMISS_TOAST",
@@ -40,8 +39,6 @@ function genId() {
   count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
 }
-
-type ActionType = typeof actionTypes
 
 type Action =
   | {

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function AddNewEvent() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -75,7 +76,7 @@ export default function AddNewEvent() {
                     <Upload className="mr-2 h-4 w-4" /> Upload Image
                   </Button>
                   {imagePreview && (
-                    <img src={imagePreview} alt="Event preview" className="h-20 w-20 object-cover rounded" />
+                    <Image src={imagePreview} alt="Event preview" width={80} height={80} className="object-cover rounded" />
                   )}
                 </div>
               </div>

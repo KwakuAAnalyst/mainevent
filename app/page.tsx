@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Plus, Calendar, X, ChevronRight, Wallet, LogOut, Copy, Check } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import Web3 from 'web3'
 import { 
   DropdownMenu,
@@ -21,8 +19,7 @@ import { toast } from "@/components/ui/use-toast"
 import { useRouter } from 'next/navigation'
 import TransgateConnect  from '@zkpass/transgate-js-sdk'
 import verifyEvmBasedResult from './verifyevmbasedresults'
-
-
+import Image from 'next/image'
 
 // Mock event data
 const eventData: Record<string, Array<{ title: string; time: string; description: string }>> = {
@@ -39,28 +36,16 @@ export default function Component() {
   const [selectedUpcomingEvent, setSelectedUpcomingEvent] = useState<string | null>(null)
   const [showWalletPopup, setShowWalletPopup] = useState(false)
   const [walletConnected, setWalletConnected] = useState(false)
-  const [showAddEventPage, setShowAddEventPage] = useState(false)
-  const [web3, setWeb3] = useState<Web3 | null>(null)
   const [account, setAccount] = useState<string | null>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [walletError, setWalletError] = useState<string | null>(null)
   const [copySuccess, setCopySuccess] = useState(false)
-  const [network, setNetwork] = useState<string>('Unknown')
-  const [balance, setBalance] = useState<string>('0')
   const router = useRouter()
-  const [Appid, setAppid] = useState<string>('30453a18-49b3-4f2b-bc6b-9879cfb51d1a');
-  const [schemaId, setSchemaId] = useState<string>('2efae1062c494f94adad29b5718e2efb');
-  const [result, setResult] = useState<any>();
-
+  const [appId] = useState<string>('30453a18-49b3-4f2b-bc6b-9879cfb51d1a')
+  const [schemaId] = useState<string>('2efae1062c494f94adad29b5718e2efb')
 
   useEffect(() => {
     setCurrentDate(new Date())
-  }, [])
-  useEffect(() => {
-    if (typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined') {
-      const web3Instance = new Web3((window as any).ethereum)
-      setWeb3(web3Instance)
-    }
   }, [])
 
   const getMonthData = (date: Date) => {
@@ -204,7 +189,7 @@ export default function Component() {
           console.error('TransGate error', error);
         }
       };
-      generate(schemaId, Appid);
+      generate(schemaId, appId);
     } else {
       // Instead of setting showAddEventPage to true, navigate to the new event page
       router.push('/event')
@@ -346,8 +331,18 @@ export default function Component() {
       console.error('Failed to copy text: ', err)
     }
   }
-  
 
+  const handleNetworkSwitch = async (networkName: string): Promise<void> => {
+    // Implementation
+  }
+
+  const switchNetwork = async (networkName: string): Promise<void> => {
+    // Implementation
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    // Implementation
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 text-white p-8">
@@ -359,7 +354,7 @@ export default function Component() {
       >
         <header className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-2">
-            <img src="/ayhq.png" alt="AYHQ Logo" className="w-30 h-10" />
+            <Image src="/ayhq.png" alt="AYHQ Logo" width={120} height={40} />
             <span className="text-2xl font-bold"></span>
           </div>
           <div className="flex items-center space-x-4">
