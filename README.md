@@ -62,7 +62,7 @@ Follow the steps below to get the app running locally on your machine.
 1. Users must verify their identity with zkPass to add new events.
 2. Click on the "Add New Event" button in the navigation bar.
 3. Complete the zkPass verification process.
-4. Connect your evm wallet.
+4. Connect your EVM wallet.
 5. Fill in the event details and submit the form.
 
 ### Deployment
